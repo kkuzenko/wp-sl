@@ -1,0 +1,35 @@
+/* line 2, scss/_news.scss */
+.news h2 {
+  font-size: 16px;
+  line-height: 20px;
+}
+/* line 6, scss/_news.scss */
+.news p {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+/* line 13, scss/_news.scss */
+.hp-items-list--item .card-text {
+  margin-left: 52%;
+}
+/* line 16, scss/_news.scss */
+.hp-items-list--item a.news-image {
+  display: block;
+  width: 50%;
+  height: 120px;
+  position: relative;
+  overflow: hidden;
+  float: left;
+}
+/* line 24, scss/_news.scss */
+.hp-items-list--item a.news-image img {
+  position: absolute;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}

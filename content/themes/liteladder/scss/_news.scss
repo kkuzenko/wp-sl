@@ -1,0 +1,35 @@
+.news {
+  h2 {
+    font-size:16px;
+    line-height:20px;
+  }
+  p {
+    font-size:14px;
+    line-height:18px;
+  }
+
+}
+.hp-items-list--item {
+  .card-text {
+    margin-left:52%;
+  }
+  a.news-image {
+    display:block;
+    width:50%;
+    height:120px;
+    position:relative;
+    overflow:hidden;
+    float:left;
+
+    img {
+      position:absolute;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      top:50%;
+      left:50%;
+    }
+  }
+}
