@@ -40,6 +40,7 @@ if( !defined( 'ABSPATH' ) ) exit;
 *      2. Filters hooks rule over shortcode arguments
 *      3. Bouncer rules over everything
 */
+
 function wsl_render_auth_widget( $args = array() )
 {
 	$auth_mode = isset( $args['mode'] ) && $args['mode'] ? $args['mode'] : 'login';

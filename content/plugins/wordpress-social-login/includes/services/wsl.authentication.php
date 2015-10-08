@@ -75,6 +75,43 @@ if( !defined( 'ABSPATH' ) ) exit;
 *
 * Ref: http://codex.wordpress.org/Plugin_API/Action_Reference/init
 */
+
+// Method: POST, PUT, GET etc
+// Data: array("param" => "value") ==> index.php?param=value
+if( !function_exists("CallSLTVAPI") ) {
+	function CallSLTVAPI( $method, $url, $data = false ) {
+		$curl = curl_init();
+		switch ( $method ) {
+			case "POST":
+				curl_setopt( $curl, CURLOPT_POST, 1 );
+
+				if ( $data ) {
+					curl_setopt( $curl, CURLOPT_POSTFIELDS, $data );
+				}
+				break;
+			case "PUT":
+				curl_setopt( $curl, CURLOPT_PUT, 1 );
+				break;
+			default:
+				if ( $data ) {
+					$url = sprintf( "%s?%s", $url, http_build_query( $data ) );
+				}
+		}
+
+		// Optional Authentication:
+		curl_setopt( $curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+		curl_setopt( $curl, CURLOPT_USERPWD, "username:password" );
+
+		curl_setopt( $curl, CURLOPT_URL, $url );
+		curl_setopt( $curl, CURLOPT_RETURNTRANSFER, 1 );
+
+		$result = curl_exec( $curl );
+
+		curl_close( $curl );
+
+		return $result;
+	}
+}
 function wsl_process_login()
 {
 	// > check for wsl actions
@@ -707,11 +744,15 @@ function wsl_process_login_create_wp_user( $provider, $hybridauth_user_profile, 
 
 	// HOOKABLE: This action runs just before creating a new wordpress user, it delegate user insert to a custom function.
 	$user_id = apply_filters( 'wsl_hook_process_login_delegate_wp_insert_user', $userdata, $provider, $hybridauth_user_profile );
-
+	$current_user_id = get_current_user_id();
 	// Create a new WordPress user
-	if( ! $user_id || ! is_integer( $user_id ) )
+	if( ! $user_id || ! is_integer( $user_id ))
 	{
-		$user_id = wp_insert_user( $userdata );
+		if (! $current_user_id) {
+			$user_id = wp_insert_user( $userdata );
+		} else {
+			$user_id = $current_user_id;
+		}
 	}
 
 	// do not continue without user_id
@@ -792,20 +833,59 @@ function wsl_process_login_authenticate_wp_user( $user_id, $provider, $redirect_
 
 	//var_dump($hybridauth_user_profile);
 	//die();
+	//$existing_user = wsl_get_stored_hybridauth_user_profiles_by_user_id($user_id);
+	//var_dump($existing_user); die();
+	$disciplines = array(
+		"dota" => 1,
+		"cs" => 2
+	);
+	$regions = array(
+		"CES" => 1,
+		"CN" => 2,
+		"EU" => 3
+	);
+	$method = "";
+	if(  $provider == "Steam" ) {
+		$user_current_steam  = get_user_meta( $user_id, 'user_steam');
+		$region = "CES";
+		$discipline_name = "dota";
+		$discipline_data = array();
 
+		if ($user_current_steam[$discipline_name]) {
+			$user_current_steam = json_decode($user_current_steam);
+			$discipline_data = $user_current_steam[$discipline_name];
+			$method = "PUT";
+		} else {
+			$method = "POST";
+		}
+
+		if ($discipline_name and $region) {
+			if ($hybridauth_user_profile->identifier) {
+				$discipline_data[$discipline_name]["steam_id"] = $hybridauth_user_profile->identifier;
+			}
+			if ($hybridauth_user_profile->displayName) {
+				$discipline_data[$discipline_name]["steam_displayName"] = $hybridauth_user_profile->displayName;
+			}
+			if ($hybridauth_user_profile->photoURL) {
+				$discipline_data[$discipline_name]["steam_avatar"] = $hybridauth_user_profile->photoURL;
+			}
+			$discipline_data[$discipline_name]["region"] = $region;
+
+		}
+		CallSLTVAPI($method, "http://api.sltv.pro/api/v1/user_disciplines", array(
+			'user_id' => $user_id,
+			'discipline_id' => $disciplines[$discipline_name],
+			'region_id' => $regions[$region],
+			'game_unique_id' => $discipline_data["steam_id"]
+		));
+		$discipline_data = json_encode($discipline_data);
+		update_user_meta( $user_id, 'user_steam', $discipline_data);
+
+	}
 	if(  $hybridauth_user_profile->photoURL )
 	{
 		update_user_meta( $user_id, 'wsl_current_user_image', $hybridauth_user_profile->photoURL );
 	}
-
-	if(  $provider == "Steam" and $hybridauth_user_profile->identifier )
-	{
-		update_user_meta( $user_id, 'wsl_current_user_steam_id', $hybridauth_user_profile->identifier );
-	}
-	if(  $provider == "Steam" and $hybridauth_user_profile->displayName )
-	{
-		update_user_meta( $user_id, 'wsl_current_user_steam_name', $hybridauth_user_profile->displayName );
-	}	
 	// Bouncer::User Moderation
 	// > When Bouncer::User Moderation is enabled, WSL will check for the current user role. If equal to 'pending', then Bouncer will do the following : 
 	// 	1. Halt the authentication process, 
