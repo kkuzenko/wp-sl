@@ -27,6 +27,7 @@
 	<div class="container">
 		<header id="masthead" class="site-header" role="banner">
 			<div class="site-branding">
+				<?php if(has_action('sl_disciplines_switch')) { do_action('sl_disciplines_switch'); } ?>
 				<?php if ( is_front_page() && is_home() ) : ?>
 					<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
 				<?php else : ?>

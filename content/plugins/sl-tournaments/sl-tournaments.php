@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: SL Tournaments
+ * Plugin Name: Starladder Toolkit
  * Plugin URI: http://starladder.tv
  * Description: Tournaments and no shit
  * Version: 1.0.0
@@ -43,6 +43,7 @@ function CallSLTVAPI($method, $url, $data = false)
 }
 if( !function_exists("sl_tournaments") ) {
 	function sl_tournaments($content) {
+		return false;
 		$tids = explode(",", get_option('sl_tournaments_info'));
 		for ($i = 0; $i < count($tids); $i++) {
 			$tid = $tids[$i];
@@ -75,6 +76,36 @@ if( !function_exists("sl_tournaments") ) {
 		}	
 	}
 	add_action('show_tournaments', 'sl_tournaments');
+}
+if( !function_exists("sl_disciplines switch") ) {
+	function sl_disciplines_switch() {
+		$top_domain = "sl.com";
+		$sites = [
+			'dota2' => 'dota2',
+			'cs' => 'CS:GO',
+			'lol' => 'League of Legends',
+			'main' => 'Main Site'
+		];
+		$current_subdomain = array_shift((explode(".",$_SERVER['HTTP_HOST'])));
+		if (!isset($current_subdomain)) {
+			unset($sites['main']);
+		} else {
+			if(array_key_exists($current_subdomain, $sites)) {
+				unset($sites[$current_subdomain]);
+			}
+		}
+	?>
+		<select onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
+		<option value="">Select...</option>
+	<?php foreach ($sites as $subdomain => $name) :
+		$subdomain == 'main' ? $domain = $top_domain : $domain = $subdomain.'.'.$top_domain;
+	?>
+		<option value="http://<?php echo $domain ;?>"><?php echo $name; ?></option>
+	<?php endforeach; ?>
+		</select>
+	<?php
+	};
+	add_action('sl_disciplines_switch', 'sl_disciplines_switch');
 }
 add_action( 'admin_menu', 'sl_tournaments_info_menu' );
 
@@ -134,13 +165,14 @@ if( !function_exists("sltv_save_user") ) {
 		$type = pathinfo($avatar_url, PATHINFO_EXTENSION);
 		$data = file_get_contents($avatar_url);
 		$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-
+		var_dump($base64); echo "<hr>";
 		if ($user) {
-			CallSLTVAPI("POST", "http://api.sltv.pro/api/v1/users/". $user_id, array(
+			var_dump(CallSLTVAPI("POST", "http://api.sltv.pro/api/v1/users/". $user_id, array(
 				'email' => $user->get("user_email"),
 				'nick' => $user->get("user_nicename"),
 				'logo' => $base64
-			));
+			))); die();
+
 		}
 	}
 }
@@ -181,7 +213,6 @@ if( !function_exists("sltv_update_user") ) {
 			$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
 			$data_2_send["logo"] = $base64;
 		}
-		CallSLTVAPI("PUT", "http://api.sltv.pro/api/v1/users/". $user_id, $data_2_send);
 	}
 }
 add_action( 'profile_update', 'sltv_update_user', 10, 2 );

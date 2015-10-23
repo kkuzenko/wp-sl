@@ -86,9 +86,7 @@ get_header(); ?>
 
                 <?php endif; ?>
                 <div class="col-xs-12 col-sm-12 col-md-6 tournaments">
-                    <?php if(has_action('show_tournaments')) { ?>
-                        <h5>Tournaments</h5>
-                        <?php do_action('show_tournaments'); } ?>
+                    <?php if(has_action('show_tournaments')) { do_action('show_tournaments'); } ?>
                 </div>
             </div>
 
