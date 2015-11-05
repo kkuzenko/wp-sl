@@ -86,7 +86,7 @@ if( !function_exists("sl_disciplines switch") ) {
 			'lol' => 'League of Legends',
 			'main' => 'Main Site'
 		];
-		$current_subdomain = array_shift((explode(".",$_SERVER['HTTP_HOST'])));
+		$current_subdomain = array_shift(explode(".",$_SERVER['HTTP_HOST']));
 		if (!isset($current_subdomain)) {
 			unset($sites['main']);
 		} else {
@@ -1280,3 +1280,184 @@ add_action( 'personal_options_update', 'update_custom_profile' );
 add_action( 'edit_user_profile_update', 'update_custom_profile' );
 add_action('show_user_profile', 'add_custom_profile_fields');
 add_action('edit_user_profile', 'add_custom_profile_fields');
+
+
+/**
+ * Adds a box to the main column on the Post and Page edit screens.
+ */
+function disciplines_add_meta_box() {
+
+	$screens = array( 'post', 'page' );
+
+	foreach ( $screens as $screen ) {
+
+		add_meta_box(
+			'disciplines_sectionid',
+			__( 'My Post Section Title', 'disciplines_textdomain' ),
+			'disciplines_meta_box_callback',
+			$screen
+		);
+	}
+}
+
+
+
+add_action( 'add_meta_boxes', 'disciplines_add_meta_box' );
+function get_disciplines_regions_by_id($post_id,$id)
+{
+
+	$regions=json_decode(file_get_contents('http://api.sltv.pro/api/v1/disciplines/'.intval($id).'/regions'),true);
+	$regions[0]->value=100;
+	foreach($regions as $k=> $v)
+		if(get_post_meta( $post_id, '_disciplines_'.$id.'_regions_'.$v['id'], true ))
+			$regions[$k]['value']=1;
+		else
+			$regions[$k]['value']=0;
+
+
+	return $regions;
+}
+
+function disciplines_meta_box_callback( $post ) {
+
+	wp_nonce_field( 'disciplines_save_meta_box_data', 'disciplines_meta_box_nonce' );
+
+	$disciplin_id=3;
+	$regions=get_disciplines_regions_by_id($post->ID,$disciplin_id);
+
+	echo '<label for="disciplines_'.$disciplin_id.'">';
+	_e( '<p>Description for this field</p>', 'disciplines_textdomain' );
+	echo '</label> ';
+	foreach($regions as $k => $v)
+	{
+		echo '<p>'.$disciplin_id.' '.$v['id'].' '.$v['name'].': <input type="checkbox" id="disciplines_'.$disciplin_id.'_'.$v['id'].'" name="disciplines['.$disciplin_id.']['.$v['id'].']" value="1" '.($v['value']===1?'checked="checked" ':'').'size="25" /></p>';
+	}
+}
+
+/**
+ * When the post is saved, saves our custom data.
+ *
+ * @param int $post_id The ID of the post being saved.
+ */
+function disciplines_save_meta_box_data( $post_id ) {
+
+
+	if ( ! isset( $_POST['disciplines_meta_box_nonce'] ) ) return;
+	if ( ! wp_verify_nonce( $_POST['disciplines_meta_box_nonce'], 'disciplines_save_meta_box_data' ) ) return;
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+
+	if ( isset( $_POST['post_type'] ) && 'page' == $_POST['post_type'] )
+		if ( ! current_user_can( 'edit_page', $post_id ) ) return;
+	else
+		if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+
+
+	$disciplines=get_post_meta( $post_id, '_disciplines_regions_json');
+	$disciplines=json_decode($disciplines[0],1);
+
+	foreach($disciplines as $k =>$v)
+		foreach($v as $kk=>$vv)
+			if(empty($_POST['disciplines'][$k][$kk]))
+				$_POST['disciplines'][$k][$kk]=0;
+
+	foreach($_POST['disciplines'] as $k =>$v)
+		foreach($v as $kk=>$vv)
+			update_post_meta( $post_id, '_disciplines_'.$k.'_regions_'.$kk, $vv );
+
+
+
+	update_post_meta( $post_id, '_disciplines_regions_json',json_encode($_POST['disciplines']) );
+
+}
+add_action( 'save_post', 'disciplines_save_meta_box_data' );
+
+
+add_action( 'init', 'create_events_hierarchical_taxonomy', 0 );
+function create_events_hierarchical_taxonomy() {
+
+// Add new taxonomy, make it hierarchical like categories
+//first do the translations part for GUI
+
+	$labels = array(
+		'name' => _x( 'Events', 'taxonomy general name' ),
+		'singular_name' => _x( 'Event', 'taxonomy singular name' ),
+		'search_items' =>  __( 'Search Events' ),
+		'all_items' => __( 'All Events' ),
+		'parent_item' => __( 'Parent Event' ),
+		'parent_item_colon' => __( 'Parent Event:' ),
+		'edit_item' => __( 'Edit Event' ),
+		'update_item' => __( 'Update Event' ),
+		'add_new_item' => __( 'Add New Event' ),
+		'new_item_name' => __( 'New Event Name' ),
+		'menu_name' => __( 'Events' ),
+	);
+
+// Now register the taxonomy
+
+	register_taxonomy('events',array('post'), array(
+		'hierarchical' => true,
+		'labels' => $labels,
+		'show_ui' => true,
+		'show_admin_column' => true,
+		'query_var' => true,
+		'rewrite' => array('slug' => 'event'),
+	));
+
+}
+
+
+// Add to your plugin admin_init function
+add_action ( 'events_add_form_fields', 'event_input_metabox' );
+add_action ( 'events_edit_form_fields', 'event_input_metabox' );
+add_action ( 'edited_events', 'save_event_data' , 10, 2);
+//add_action( 'edited_category', 'save_taxonomy_custom_meta', 10, 2 );
+function event_input_metabox($event) {
+
+
+	// retrieve the existing value(s) for this meta field. This returns an array
+	$term_meta = get_option('new_metadata');
+	var_dump($term_meta);
+	$event_meta_prize = get_metadata('event_meta_prize', $event->term_id, 'new_metadata', TRUE);
+	$event_meta_ids   = get_metadata('event_meta_ids', $event->term_id, 'new_metadata', TRUE);
+	$event_meta_image = get_metadata('event_meta_image', $event->term_id, 'new_metadata', TRUE);
+
+	?>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Prize money') ?></label></th>
+		<td>
+			<input name='event_meta_prize' id='event_meta_prize' value="<?php echo $event_meta_prize?>">
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('tornaments ids (1,2,3)') ?></label></th>
+		<td>
+			<input name='event_meta_ids' id='event_meta_ids' value="<?php echo $event_meta_ids?>">
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('image url') ?></label></th>
+		<td>
+			<input name='event_meta_image' id='event_meta_image' value="<?php echo $event_meta_image?>">
+		</td>
+	</tr>
+
+	<?php
+}
+
+function save_event_data($event_id) {
+
+	if (isset($_POST['event_meta_prize'])) {
+		$event_meta_prize = esc_attr($_POST['event_meta_prize']);
+		update_metadata('event', $event_id, 'event_meta_prize', $event_meta_prize);
+	}
+	if (isset($_POST['event_meta_ids'])) {
+		$event_meta_ids = esc_attr($_POST['event_meta_ids']);
+		update_metadata('event', $event_id, 'event_meta_ids', $event_meta_ids);
+	}
+	if (isset($_POST['event_meta_image'])) {
+		$event_meta_image = esc_attr($_POST['event_meta_image']);
+		update_metadata('event', $event_id, 'event_meta_image', $event_meta_image);
+	}
+
+}
+?>

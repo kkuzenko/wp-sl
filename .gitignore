@@ -26,6 +26,8 @@ content/cache/*
 content/backup/*
 wp-config.php
 
+content/themes/liteladder/.*
+
 # Misc #
 ###################
 
