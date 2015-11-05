@@ -1,0 +1,97 @@
+#sliderWrapper {
+  .slide {
+    height:320px;
+    background-color:#666;
+    background-size:cover;
+    position:relative;
+    cursor:pointer;
+
+    .content {
+      position:absolute;
+      bottom:40px;
+      left:40px;
+    }
+    .title {
+      font:52px/40px Arial, Helvetica, sans-serif;
+      color:#fff;
+      padding-bottom:10px;
+    }
+    .content-info {
+      color:#fff;
+      width:525px;
+      border-top:1px solid rgba(255, 255, 255, 0.1);
+      padding-top:20px;
+      box-sizing: border-box;
+      i {
+        position:absolute;
+        top:7px;
+        left:5px;
+        font-size:25px;
+      }
+      .prime {
+        font:13px/19px Arial, Helvetica, sans-serif;
+        color:#fff;
+        opacity:.92;
+        display:inline-block;
+        width:100%;
+        white-space: nowrap;
+      }
+      .sub {
+        font:19px/20px Arial, Helvetica, sans-serif;
+        width:100%;
+        display:inline-block;
+        white-space: nowrap;
+      }
+    }
+    .dates, .prize, .location {
+      display:table-cell;
+      padding:0 10px 0 45px;
+      position:relative;
+    }
+  }
+}
+.events {
+  padding-top:40px;
+
+  .card {
+    background: #fff;
+    border-radius:3px 3px 0 0;
+    a {
+      color:#000;
+      text-decoration: none;
+    }
+    img {
+      height:140px;
+      border-radius:3px;
+    }
+
+    .discipline {
+      margin-bottom:0.5rem;
+      font:700 13px/13px Arial, Helvetica, sans-serif;
+      a {
+        color:#e02d2d;
+      }
+    }
+    .event-name {
+      font:700 17px/17px Arial, Helvetica, sans-serif;
+    }
+
+    .btn-sm.event-status {
+      font:700 11px/16px Arial, Helvetica, sans-serif;
+      color:#1b9fe0;
+      border-color:#1b9fe0;
+      padding-top:0;
+      padding-bottom:0;
+      text-transform: uppercase;
+      border-radius:3px;
+      &:hover {
+        background:none;
+        opacity:.5;
+      }
+    }
+    .event-prize {
+      font:15px/16px Arial, Helvetica, sans-serif;
+      color:rgba(0,0,0,.64);
+    }
+  }
+}

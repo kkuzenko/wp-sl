@@ -1,6 +1,119 @@
 /* line 1, scss/_header.scss */
 body {
   background: #fafafa;
+  border-top: 1px solid #ebebeb;
+  padding: 40px 0;
+}
+
+/* line 2, scss/_events.scss */
+#sliderWrapper .slide {
+  height: 320px;
+  background-color: #666;
+  background-size: cover;
+  position: relative;
+  cursor: pointer;
+}
+/* line 9, scss/_events.scss */
+#sliderWrapper .slide .content {
+  position: absolute;
+  bottom: 40px;
+  left: 40px;
+}
+/* line 14, scss/_events.scss */
+#sliderWrapper .slide .title {
+  font: 52px/40px Arial, Helvetica, sans-serif;
+  color: #fff;
+  padding-bottom: 10px;
+}
+/* line 19, scss/_events.scss */
+#sliderWrapper .slide .content-info {
+  color: #fff;
+  width: 525px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  box-sizing: border-box;
+}
+/* line 25, scss/_events.scss */
+#sliderWrapper .slide .content-info i {
+  position: absolute;
+  top: 7px;
+  left: 5px;
+  font-size: 25px;
+}
+/* line 31, scss/_events.scss */
+#sliderWrapper .slide .content-info .prime {
+  font: 13px/19px Arial, Helvetica, sans-serif;
+  color: #fff;
+  opacity: .92;
+  display: inline-block;
+  width: 100%;
+  white-space: nowrap;
+}
+/* line 39, scss/_events.scss */
+#sliderWrapper .slide .content-info .sub {
+  font: 19px/20px Arial, Helvetica, sans-serif;
+  width: 100%;
+  display: inline-block;
+  white-space: nowrap;
+}
+/* line 46, scss/_events.scss */
+#sliderWrapper .slide .dates, #sliderWrapper .slide .prize, #sliderWrapper .slide .location {
+  display: table-cell;
+  padding: 0 10px 0 45px;
+  position: relative;
+}
+
+/* line 53, scss/_events.scss */
+.events {
+  padding-top: 40px;
+}
+/* line 56, scss/_events.scss */
+.events .card {
+  background: #fff;
+  border-radius: 3px 3px 0 0;
+}
+/* line 59, scss/_events.scss */
+.events .card a {
+  color: #000;
+  text-decoration: none;
+}
+/* line 63, scss/_events.scss */
+.events .card img {
+  height: 140px;
+  border-radius: 3px;
+}
+/* line 68, scss/_events.scss */
+.events .card .discipline {
+  margin-bottom: 0.5rem;
+  font: 700 13px/13px Arial, Helvetica, sans-serif;
+}
+/* line 71, scss/_events.scss */
+.events .card .discipline a {
+  color: #e02d2d;
+}
+/* line 75, scss/_events.scss */
+.events .card .event-name {
+  font: 700 17px/17px Arial, Helvetica, sans-serif;
+}
+/* line 79, scss/_events.scss */
+.events .card .btn-sm.event-status {
+  font: 700 11px/16px Arial, Helvetica, sans-serif;
+  color: #1b9fe0;
+  border-color: #1b9fe0;
+  padding-top: 0;
+  padding-bottom: 0;
+  text-transform: uppercase;
+  border-radius: 3px;
+}
+/* line 87, scss/_events.scss */
+.events .card .btn-sm.event-status:hover {
+  background: none;
+  opacity: 0.5;
+}
+/* line 92, scss/_events.scss */
+.events .card .event-prize {
+  font: 15px/16px Arial, Helvetica, sans-serif;
+  color: rgba(0, 0, 0, 0.64);
 }
 
 /* line 2, scss/_news.scss */
@@ -37,4 +150,11 @@ body {
   transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
+}
+
+/* line 36, scss/_news.scss */
+.twitter-feed {
+  background: #fff;
+  padding-left: 15px;
+  box-sizing: border-box;
 }

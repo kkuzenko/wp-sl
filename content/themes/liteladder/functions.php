@@ -159,3 +159,4 @@ function new_excerpt_more( $more ) {
 }
 add_filter('excerpt_more', 'new_excerpt_more');
 add_filter( 'excerpt_length', 'custom_excerpt_length', 999 );
+add_filter('show_admin_bar', '__return_false');
