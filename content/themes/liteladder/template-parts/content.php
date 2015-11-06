@@ -27,6 +27,7 @@
 			<?php the_post_thumbnail(); ?>
 		</a>
 	<?php endif; ?>
+	<?php the_category( sprintf( '<p class="card-text"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></p>' ); ?>
 	<?php the_title( sprintf( '<h2 class="card-text entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 	<div class="card-text"><?php the_excerpt(); ?></div>
 </article><!-- #post-## -->

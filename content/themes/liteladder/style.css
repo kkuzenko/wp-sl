@@ -65,7 +65,7 @@ body {
 
 /* line 53, scss/_events.scss */
 .events {
-  padding-top: 40px;
+  padding: 40px 0;
 }
 /* line 56, scss/_events.scss */
 .events .card {
@@ -108,7 +108,7 @@ body {
 /* line 87, scss/_events.scss */
 .events .card .btn-sm.event-status:hover {
   background: none;
-  opacity: 0.5;
+  opacity: .5;
 }
 /* line 92, scss/_events.scss */
 .events .card .event-prize {
@@ -157,4 +157,6 @@ body {
   background: #fff;
   padding-left: 15px;
   box-sizing: border-box;
+  border: .0625rem solid #e5e5e5;
+  border-radius: 3px;
 }

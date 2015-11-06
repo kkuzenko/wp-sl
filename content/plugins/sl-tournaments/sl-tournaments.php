@@ -1400,7 +1400,7 @@ function create_events_hierarchical_taxonomy() {
 		'show_ui' => true,
 		'show_admin_column' => true,
 		'query_var' => true,
-		'rewrite' => array('slug' => 'event'),
+		'rewrite' => array('slug' => 'events'),
 	));
 
 }

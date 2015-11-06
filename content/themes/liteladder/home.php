@@ -74,6 +74,7 @@ get_header(); ?>
                     </div>
                 </div>
             </div>
+            
             <div class="row events">
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
                     <div class="card ">
@@ -126,7 +127,6 @@ get_header(); ?>
         <div class="container">
             <div class="row">
                 <?php if ( have_posts() ) : ?>
-                <h5>News</h5>
                 <div class="col-xs-12 col-sm-12 col-md-6 news">
 
                     <div class="card ">
