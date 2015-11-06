@@ -1522,34 +1522,3 @@ function addRoutes() {
 	flush_rewrite_rules();
 }
 add_action('init', 'addRoutes');
-?>
-server {
-	listen			80;
-	server_name		sl.com *.sl.com;
-	root			/home/ergo/vhosts/wp/html;
-	index			index.php;
-	access_log		/var/log/nginx/wp.access.log;
-	error_page 404	/404.html;
-	error_page 403	/403.html;
-
-	if (!-e $request_filename) {
-		rewrite /wp-admin$ $scheme://$host$uri/ permanent;
-		rewrite ^(/[^/]+)?(/wp-.*) $2 last;
-		rewrite ^(/[^/]+)?(/.*\.php) $2 last;
-	}
-
-	location ~* \.(js|css|png|jpg|jpeg|gif|ico|eot|woff|ttf|svg|swf)$ {
-		access_log off;
-	}
-
-	location ~ \.php$ {
-		try_files			$uri $uri/ /index.php$is_args$args;
-		fastcgi_pass		unix:/var/run/php5-fpm.sock;
-		fastcgi_index		index.php;
-		fastcgi_param		SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		include				fastcgi_params;
-	}
-
-
-}
-
