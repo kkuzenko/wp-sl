@@ -1413,31 +1413,63 @@ add_action ( 'edited_events', 'save_event_data' , 10, 2);
 //add_action( 'edited_category', 'save_taxonomy_custom_meta', 10, 2 );
 function event_input_metabox($event) {
 
+	$event_meta = json_decode(get_option('event_meta_'. $event->term_id),true);
 
-	// retrieve the existing value(s) for this meta field. This returns an array
-	$term_meta = get_option('new_metadata');
-	var_dump($term_meta);
-	$event_meta_prize = get_metadata('event_meta_prize', $event->term_id, 'new_metadata', TRUE);
-	$event_meta_ids   = get_metadata('event_meta_ids', $event->term_id, 'new_metadata', TRUE);
-	$event_meta_image = get_metadata('event_meta_image', $event->term_id, 'new_metadata', TRUE);
+	$event_date_from = get_option('event_meta_date_'. $event->term_id.'_from');
+	$event_date_to = get_option('event_meta_date_'. $event->term_id.'_to');
+	$themes = wp_get_themes( );
 
 	?>
 	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('From') ?></label></th>
+		<td>
+			<input name='event_meta_date_from' id='event_meta_date_from' value="<?php echo $event_date_from;?>" type="date">
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('To') ?></label></th>
+		<td>
+			<input name='event_meta_date_to' id='event_meta_date_to' value="<?php echo $event_date_to;?>" type="date">
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Baners') ?></label></th>
+		<td>
+			<textarea name='event_meta_baners' id='event_meta_baners'><?php echo $event_meta['baners'];?></textarea>
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Theme') ?></label></th>
+		<td>
+			<select name='event_meta_theme' id='event_meta_theme'>
+<?php foreach($themes as $k => $v){?>
+				<option value="<?php echo $v->get_theme_root_uri() ;?>"<?php if($event_meta['theme']==$v->get_theme_root_uri() )' selected="selected"';?>><?php echo $k;?></option>
+<?php } ?>
+			</select>
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Short name') ?></label></th>
+		<td>
+			<input name='event_meta_shortname' id='event_meta_shortname' value="<?php echo $event_meta['shortname']?>">
+		</td>
+	</tr>
+	<tr class="form-field">
 		<th scope="row" valign="top"><label for="event_widget"><?php _e('Prize money') ?></label></th>
 		<td>
-			<input name='event_meta_prize' id='event_meta_prize' value="<?php echo $event_meta_prize?>">
+			<input name='event_meta_prize' id='event_meta_prize' value="<?php echo $event_meta['prize']?>">
 		</td>
 	</tr>
 	<tr class="form-field">
 		<th scope="row" valign="top"><label for="event_widget"><?php _e('tornaments ids (1,2,3)') ?></label></th>
 		<td>
-			<input name='event_meta_ids' id='event_meta_ids' value="<?php echo $event_meta_ids?>">
+			<input name='event_meta_ids' id='event_meta_ids' value="<?php echo $event_meta['ids']?>">
 		</td>
 	</tr>
 	<tr class="form-field">
 		<th scope="row" valign="top"><label for="event_widget"><?php _e('image url') ?></label></th>
 		<td>
-			<input name='event_meta_image' id='event_meta_image' value="<?php echo $event_meta_image?>">
+			<input name='event_meta_image' id='event_meta_image' value="<?php echo $event_meta['image']?>">
 		</td>
 	</tr>
 
@@ -1446,18 +1478,78 @@ function event_input_metabox($event) {
 
 function save_event_data($event_id) {
 
-	if (isset($_POST['event_meta_prize'])) {
-		$event_meta_prize = esc_attr($_POST['event_meta_prize']);
-		update_metadata('event', $event_id, 'event_meta_prize', $event_meta_prize);
-	}
-	if (isset($_POST['event_meta_ids'])) {
-		$event_meta_ids = esc_attr($_POST['event_meta_ids']);
-		update_metadata('event', $event_id, 'event_meta_ids', $event_meta_ids);
-	}
-	if (isset($_POST['event_meta_image'])) {
-		$event_meta_image = esc_attr($_POST['event_meta_image']);
-		update_metadata('event', $event_id, 'event_meta_image', $event_meta_image);
-	}
+
+	$event_meta_from=get_option('event_meta_date_'.$event_id.'_from');
+	$event_meta_to=get_option('event_meta_date_'.$event_id.'_to');
+
+	if (isset($_POST['event_meta_date_from']))
+		$event_meta_from = esc_attr($_POST['event_meta_date_from']);
+
+	if (isset($_POST['event_meta_date_to']))
+		$event_meta_to = esc_attr($_POST['event_meta_date_to']);
+
+	update_option('event_meta_date_'.$event_id.'_from', $event_meta_from);
+	update_option('event_meta_date_'.$event_id.'_to', $event_meta_to);
+
+	$event_meta=json_decode(get_option('event_meta_'.$event_id),true);
+
+	if (isset($_POST['event_meta_baners']))
+		$event_meta['baners'] = $_POST['event_meta_baners'];
+
+	if (isset($_POST['event_meta_theme']))
+		$event_meta['theme'] = $_POST['event_meta_theme'];
+
+	if (isset($_POST['event_meta_shortname']))
+		$event_meta['shortname'] = $_POST['event_meta_shortname'];
+
+	if (isset($_POST['event_meta_prize']))
+		$event_meta['prize'] = $_POST['event_meta_prize'];
+
+	if (isset($_POST['event_meta_ids']))
+		$event_meta['ids'] = $_POST['event_meta_ids'];
+
+	if (isset($_POST['event_meta_image']))
+		$event_meta['image'] = $_POST['event_meta_image'];
+
+	update_option('event_meta_'.$event_id,json_encode($event_meta));
+
 
 }
+
+function addRoutes() {
+	add_rewrite_tag('%event%', '([^&]+)');
+	add_rewrite_rule('(event)/([^/]+)/news$', 'index.php?pagename=$matches[1]&event=$matches[2]', 'top');
+	flush_rewrite_rules();
+}
+add_action('init', 'addRoutes');
 ?>
+server {
+	listen			80;
+	server_name		sl.com *.sl.com;
+	root			/home/ergo/vhosts/wp/html;
+	index			index.php;
+	access_log		/var/log/nginx/wp.access.log;
+	error_page 404	/404.html;
+	error_page 403	/403.html;
+
+	if (!-e $request_filename) {
+		rewrite /wp-admin$ $scheme://$host$uri/ permanent;
+		rewrite ^(/[^/]+)?(/wp-.*) $2 last;
+		rewrite ^(/[^/]+)?(/.*\.php) $2 last;
+	}
+
+	location ~* \.(js|css|png|jpg|jpeg|gif|ico|eot|woff|ttf|svg|swf)$ {
+		access_log off;
+	}
+
+	location ~ \.php$ {
+		try_files			$uri $uri/ /index.php$is_args$args;
+		fastcgi_pass		unix:/var/run/php5-fpm.sock;
+		fastcgi_index		index.php;
+		fastcgi_param		SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include				fastcgi_params;
+	}
+
+
+}
+
