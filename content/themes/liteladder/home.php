@@ -114,7 +114,10 @@ get_header(); ?>
                     <?php endif; ?>
                     <?php endforeach; ?>
                     <?php endwhile; ?>
+
+                    <a class="more-news" href="#">Читать больше новостей</a>
                     </div>
+
                 </div>
                 <?php else : ?>
 

@@ -1,5 +1,8 @@
 .news {
-  border-radius:3px;
+  .card {
+    background:#fff;
+    border-radius:3px;
+  }
   .top-news-item {
     height:310px;
     padding:0;
@@ -48,6 +51,14 @@
   }
   .card-block:not(.top-news-item) {
     border-bottom:.0625rem solid #e5e5e5;
+  }
+  .more-news {
+    text-align:center;
+    height:35px;
+    font:13px/35px Arial, Helvetica, sans-serif;
+    color:rgba(0,0,0,.48);
+    display:block;
+    text-decoration: none;
   }
 }
 .hp-items-list--item {
