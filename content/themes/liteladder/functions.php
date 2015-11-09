@@ -125,7 +125,27 @@ function liteladder_scripts() {
 	}
 }
 add_action( 'wp_enqueue_scripts', 'liteladder_scripts' );
-
+function format_prize( $prize, $currency  = 'USD') {
+	$currencies = array(
+		'USD' => '$',
+		'EUR' => 'EUR',
+		'UAH' => 'UAH',
+	);
+	$string = number_format( $prize, 0, '', '\'');
+	if ($currency == 'USD') {
+		$string = $currencies[$currency] . $string;
+	} else {
+		$string = $string . $currencies[$currency];
+	}
+	return $string;
+}
+function posts_on_homepage( $query ) {
+	if ( $query->is_home() && $query->is_main_query() ) {
+		$query->set( 'posts_per_page', 7 );
+		$query->set( 'category__not_in', 1 );
+	}
+}
+add_action( 'pre_get_posts', 'posts_on_homepage' );
 /**
  * Implement the Custom Header feature.
  */
@@ -160,3 +180,5 @@ function new_excerpt_more( $more ) {
 add_filter('excerpt_more', 'new_excerpt_more');
 add_filter( 'excerpt_length', 'custom_excerpt_length', 999 );
 add_filter('show_admin_bar', '__return_false');
+add_theme_support( 'post-thumbnails' );
+add_image_size('lg-news-list-crop', 386, 180, array("cneter", "center"));

@@ -1433,31 +1433,33 @@ function event_input_metabox($event) {
 		</td>
 	</tr>
 	<tr class="form-field">
-		<th scope="row" valign="top"><label for="event_widget"><?php _e('Baners') ?></label></th>
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Discipline') ?></label></th>
 		<td>
-			<textarea name='event_meta_baners' id='event_meta_baners'><?php echo $event_meta['baners'];?></textarea>
+			<input type="text" name='event_meta_discipline' id='event_meta_discipline' value="<?php echo $event_meta['discipline'];?>">
 		</td>
 	</tr>
 	<tr class="form-field">
-		<th scope="row" valign="top"><label for="event_widget"><?php _e('Theme') ?></label></th>
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Banners') ?></label></th>
 		<td>
-			<select name='event_meta_theme' id='event_meta_theme'>
-<?php foreach($themes as $k => $v){?>
-				<option value="<?php echo $v->get_theme_root_uri() ;?>"<?php if($event_meta['theme']==$v->get_theme_root_uri() )' selected="selected"';?>><?php echo $k;?></option>
-<?php } ?>
-			</select>
+			<textarea name='event_meta_banners' id='event_meta_banners'><?php echo $event_meta['banners'];?></textarea>
 		</td>
 	</tr>
 	<tr class="form-field">
-		<th scope="row" valign="top"><label for="event_widget"><?php _e('Short name') ?></label></th>
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Theme Name') ?></label></th>
 		<td>
-			<input name='event_meta_shortname' id='event_meta_shortname' value="<?php echo $event_meta['shortname']?>">
+			<input name='event_meta_theme_name' id='event_meta_theme_name' value="<?php echo $event_meta['theme_name']?>">
 		</td>
 	</tr>
 	<tr class="form-field">
 		<th scope="row" valign="top"><label for="event_widget"><?php _e('Prize money') ?></label></th>
 		<td>
 			<input name='event_meta_prize' id='event_meta_prize' value="<?php echo $event_meta['prize']?>">
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Prize Currency') ?></label></th>
+		<td>
+			<input name='event_meta_prize_currency' id='event_meta_prize_currency' value="<?php echo $event_meta['prize_currency']?>">
 		</td>
 	</tr>
 	<tr class="form-field">
@@ -1470,6 +1472,12 @@ function event_input_metabox($event) {
 		<th scope="row" valign="top"><label for="event_widget"><?php _e('image url') ?></label></th>
 		<td>
 			<input name='event_meta_image' id='event_meta_image' value="<?php echo $event_meta['image']?>">
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row" valign="top"><label for="event_widget"><?php _e('Status') ?></label></th>
+		<td>
+			<input name='event_meta_status' id='event_meta_status' value="<?php echo $event_meta['status']?>">
 		</td>
 	</tr>
 
@@ -1493,23 +1501,29 @@ function save_event_data($event_id) {
 
 	$event_meta=json_decode(get_option('event_meta_'.$event_id),true);
 
-	if (isset($_POST['event_meta_baners']))
-		$event_meta['baners'] = $_POST['event_meta_baners'];
+	if (isset($_POST['event_meta_banners']))
+		$event_meta['banners'] = $_POST['event_meta_banners'];
 
-	if (isset($_POST['event_meta_theme']))
-		$event_meta['theme'] = $_POST['event_meta_theme'];
-
-	if (isset($_POST['event_meta_shortname']))
-		$event_meta['shortname'] = $_POST['event_meta_shortname'];
+	if (isset($_POST['event_meta_theme_name']))
+		$event_meta['theme_name'] = $_POST['event_meta_theme_name'];
 
 	if (isset($_POST['event_meta_prize']))
 		$event_meta['prize'] = $_POST['event_meta_prize'];
+
+	if (isset($_POST['event_meta_prize_currency']))
+		$event_meta['prize_currency'] = $_POST['event_meta_prize_currency'];
 
 	if (isset($_POST['event_meta_ids']))
 		$event_meta['ids'] = $_POST['event_meta_ids'];
 
 	if (isset($_POST['event_meta_image']))
 		$event_meta['image'] = $_POST['event_meta_image'];
+
+	if (isset($_POST['event_meta_status']))
+		$event_meta['status'] = $_POST['event_meta_status'];
+
+	if (isset($_POST['event_meta_discipline']))
+		$event_meta['discipline'] = $_POST['event_meta_discipline'];
 
 	update_option('event_meta_'.$event_id,json_encode($event_meta));
 
