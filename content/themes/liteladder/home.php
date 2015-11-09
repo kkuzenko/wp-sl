@@ -74,82 +74,59 @@ get_header(); ?>
                     </div>
                 </div>
             </div>
-            
+
+            <?php
+            $events = get_terms( 'events' );
+            if ( count($events) > 0 ) : ?>
             <div class="row events">
+                <?php foreach ($events as $event) :
+                $event_meta = json_decode(get_option('event_meta_'. $event->term_id),true);
+                $event_url = get_term_link( $event );
+                ?>
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
                     <div class="card ">
-                        <a href="#"><img class="card-img-top img-responsive" src="<?php echo get_template_directory_uri(); ?>/img/slheader.png" alt="Card image cap"></a>
+                        <a href="<?php echo $event_url; ?>"><img class="card-img-top img-responsive" src="<?php echo get_template_directory_uri(); ?>/img/slheader.png" alt="Card image cap"></a>
                         <div class="card-block clearfix">
-                            <p class="card-text discipline"><a href="#">Dota 2</a></p>
-                            <p class="card-text event-name"><a href="#">Starladder Long Tournament Name Super Pro 12</a></p>
-                            <a href="#" class="btn btn-sm btn-secondary-outline pull-left event-status">Live</a>
-                            <a href="#" class="pull-right event-prize">$85'000</a>
+                            <p class="card-text discipline"><a href="<?php echo $event_url; ?>"><?php echo $event_meta['discipline']; ?></a></p>
+                            <p class="card-text event-name"><a href="<?php echo $event_url; ?>"><?php echo $event->name; ?></a></p>
+                            <a href="<?php echo $event_url; ?>" class="btn btn-sm btn-secondary-outline pull-left event-status"><?php echo $event_meta['status']; ?></a>
+                            <a href="<?php echo $event_url; ?>" class="pull-right event-prize"><?php echo format_prize( $event_meta['prize'] ); ?></a>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-                    <div class="card ">
-                        <a href="#"><img class="card-img-top img-responsive" src="<?php echo get_template_directory_uri(); ?>/img/slheader.png" alt="Card image cap"></a>
-                        <div class="card-block clearfix">
-                            <p class="card-text discipline"><a href="#">Dota 2</a></p>
-                            <p class="card-text event-name"><a href="#">Starladder Long Tournament Name Super Pro 12</a></p>
-                            <a href="#" class="btn btn-sm btn-secondary-outline pull-left event-status">Live</a>
-                            <a href="#" class="pull-right event-prize">$85'000</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-                    <div class="card ">
-                        <a href="#"><img class="card-img-top img-responsive" src="<?php echo get_template_directory_uri(); ?>/img/slheader.png" alt="Card image cap"></a>
-                        <div class="card-block clearfix">
-                            <p class="card-text discipline"><a href="#">Dota 2</a></p>
-                            <p class="card-text event-name"><a href="#">Starladder Long Tournament Name Super Pro 12</a></p>
-                            <a href="#" class="btn btn-sm btn-secondary-outline pull-left event-status">Live</a>
-                            <a href="#" class="pull-right event-prize">$85'000</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
-                    <div class="card ">
-                        <a href="#"><img class="card-img-top img-responsive" src="<?php echo get_template_directory_uri(); ?>/img/slheader.png" alt="Card image cap"></a>
-                        <div class="card-block clearfix">
-                            <p class="card-text discipline"><a href="#">Dota 2</a></p>
-                            <p class="card-text event-name"><a href="#">Starladder Long Tournament Name Super Pro 12</a></p>
-                            <a href="#" class="btn btn-sm btn-secondary-outline pull-left event-status">Live</a>
-                            <a href="#" class="pull-right event-prize">$85'000</a>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
+            <?php endif; ?>
         </div>
 
 
         <div class="container">
             <div class="row">
                 <?php if ( have_posts() ) : ?>
-                <div class="col-xs-12 col-sm-12 col-md-6 news">
+                <div class="col-xs-12 col-sm-12 col-md-6 news" id="newsCol">
 
                     <div class="card ">
                     <?php set_query_var( 'first', true ); ?>
                     <?php while ( have_posts() ) : the_post(); ?>
-
-                    <?php get_template_part( 'template-parts/content', get_post_format() ); ?>
+                    <?php foreach(get_the_category() as $category) : ?>
+                    <?php if ($category->cat_name != 'Uncategorized') : ?>
+                        <?php get_template_part( 'template-parts/content', get_post_format() ); ?>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
                     <?php endwhile; ?>
-                    <?php the_posts_navigation(); ?>
+
+                    <a class="more-news" href="#">Читать больше новостей</a>
                     </div>
+
                 </div>
                 <?php else : ?>
 
                     <?php // get_template_part( 'template-parts/content', 'none' ); ?>
 
                 <?php endif; ?>
-                <div class="col-xs-12 col-sm-12 col-md-6">
-                    <div class="twitter-feed">
-                        <?php if(has_action('show_tournaments')) { do_action('show_tournaments'); } ?>
-                        <a class="twitter-timeline"
-                           data-chrome="noborders transparent"
-                           href="https://twitter.com/dotasltv" data-widget-id="661527685202604032">Tweets by @dotasltv</a>
-                        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+                <div class="col-xs-12 col-sm-12 col-md-6" >
+                    <div class="twitter-feed" id="twitterCol">
+
                     </div>
                 </div>
             </div>
