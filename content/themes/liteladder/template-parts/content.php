@@ -7,14 +7,18 @@
  * @package liteladder
  */
 ?>
-<?php  $first = get_query_var( 'first' );  ?>
+<?php
+$first = get_query_var( 'first' );
+$post_date = get_custom_post_date( get_the_time('U') );
+?>
+
 <?php if ($first) : ?>
 <?php $url = wp_get_attachment_url( get_post_thumbnail_id($post->ID) ); ?>
 <article class="card-block top-news-item clearfix" style="background-image: url(<?php echo $url; ?>)">
 	<div class="meta">
 		<p class="card-text clearfix">
 			<span class="pull-left"><span class="cat-name"><?php the_category( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></span></span>
-			<span class="pull-right"><span class="post-date">Сегодня</span></span>
+			<span class="pull-right"><span class="post-date"><?php echo $post_date; ?></span></span>
 		</p>
 		<?php the_title( sprintf( '<h2 class="card-text entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 	</div>
@@ -30,7 +34,7 @@
 	<?php endif; ?>
 	<div class="card-text">
 		<span class="pull-left"><span class="cat-name"><?php the_category( sprintf( '<a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a>' ); ?></span></span>
-		<span class="pull-right"><span class="post-date">Сегодня</span></span><br>
+		<span class="pull-right"><span class="post-date"><?php echo $post_date; ?></span></span><br>
 		<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
 		<?php $excerpt = get_the_excerpt(); ?>
 		<p class="news-excerpt"><?php echo $excerpt;?></p>

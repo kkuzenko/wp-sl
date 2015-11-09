@@ -182,3 +182,14 @@ add_filter( 'excerpt_length', 'custom_excerpt_length', 999 );
 add_filter('show_admin_bar', '__return_false');
 add_theme_support( 'post-thumbnails' );
 add_image_size('lg-news-list-crop', 386, 180, array("cneter", "center"));
+function get_custom_post_date ($post_time) {
+	$days_old = ( current_time( timestamp ) - $post_time - ( get_settings( 'gmt_offset' ) * 3600 ) ) / ( 60 * 60 * 24 );
+
+	if ( $days_old <= 1 ) {
+		return "Сегодня";
+	} elseif ( $days_old > 1 & $days_old <= 2 ) {
+		return "Вчера";
+	} else {
+		return  the_date( 'd M' );
+	}
+}
